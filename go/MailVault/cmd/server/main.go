@@ -4,6 +4,9 @@ import (
 	"log"
 
 	"github.com/daexaf/mailvault/internal/bootstrap"
+	"github.com/daexaf/mailvault/internal/dto"
+	"github.com/daexaf/mailvault/internal/infrastructure/persistence/gorm"
+	"github.com/daexaf/mailvault/internal/service"
 )
 
 func main() {
@@ -34,4 +37,21 @@ func main() {
 
 	app.Logger.Info("Database connected successfully")
 
+	boot, err := bootstrap.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repo := gorm.NewBranchRepository(boot.DB)
+
+	service := service.NewBranchService(repo)
+
+	err = service.Create(dto.CreateBranchRequest{
+		Code: "BDG",
+		Name: "Bandung",
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

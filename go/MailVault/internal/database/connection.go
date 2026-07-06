@@ -19,13 +19,13 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 		cfg.DBName,
 	)
 
-	fmt.Println("========== CONFIG ==========")
-	fmt.Println("Server   :", cfg.DBServer)
-	fmt.Println("Database :", cfg.DBName)
-	fmt.Println("User     :", cfg.DBUser)
-	fmt.Println("Password :", cfg.DBPassword)
-	fmt.Println("DSN      :", dsn)
-	fmt.Println("============================")
+	// fmt.Println("========== CONFIG ==========")
+	// fmt.Println("Server   :", cfg.DBServer)
+	// fmt.Println("Database :", cfg.DBName)
+	// fmt.Println("User     :", cfg.DBUser)
+	// fmt.Println("Password :", cfg.DBPassword)
+	// fmt.Println("DSN      :", dsn)
+	// fmt.Println("============================")
 
 	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 	if err != nil {
