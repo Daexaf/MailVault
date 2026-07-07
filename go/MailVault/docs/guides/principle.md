@@ -70,3 +70,7 @@ MailAccountService
 │
 ▼
 SQL Server
+
+Service adalah tempat:
+
+Transformasi + Keputusan + Business Rule

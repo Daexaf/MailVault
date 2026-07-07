@@ -26,11 +26,13 @@ func New() (*Bootstrap, error) {
 	log := logger.New()
 
 	db, err := database.Connect(cfg)
-	if err := database.Migrate(db); err != nil {
-		return nil, fmt.Errorf("database migration: %w", err)
-	}
+
 	if err != nil {
 		return nil, fmt.Errorf("bootstrap database: %w", err)
+	}
+
+	if err := database.Migrate(db); err != nil {
+		return nil, fmt.Errorf("database migration: %w", err)
 	}
 
 	return &Bootstrap{

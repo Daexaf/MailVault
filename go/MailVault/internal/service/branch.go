@@ -18,14 +18,14 @@ func NewBranchService(repo repository.BranchRepository) *BranchService {
 	}
 }
 
-func (s *BranchService) Create(req dto.CreateBranchRequest) error {
+func (s *BranchService) Create(req dto.CreateBranchRequest) (*entities.Branch, error) {
 	exists, err := s.repo.ExistsByCode(req.Code)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if exists {
-		return errors.New("branch code already exists")
+		return nil, errors.New("branch code already exists")
 	}
 
 	branch := entities.Branch{
@@ -33,5 +33,10 @@ func (s *BranchService) Create(req dto.CreateBranchRequest) error {
 		Name: req.Name,
 	}
 
-	return s.repo.Create(&branch)
+	// return s.repo.Create(&branch)
+	if err := s.repo.Create(&branch); err != nil {
+		return nil, err
+	}
+
+	return &branch, nil
 }
