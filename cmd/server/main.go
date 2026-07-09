@@ -5,6 +5,7 @@ import (
 
 	"github.com/daexaf/mailvault/internal/bootstrap"
 	"github.com/daexaf/mailvault/internal/handler"
+	"github.com/daexaf/mailvault/internal/infrastructure/persistence/gorm"
 	branchrepo "github.com/daexaf/mailvault/internal/infrastructure/persistence/gorm"
 	"github.com/daexaf/mailvault/internal/route"
 	"github.com/daexaf/mailvault/internal/service"
@@ -12,50 +13,6 @@ import (
 )
 
 func main() {
-	// fmt.Println("MailVault is starting...")
-	// cfg, err := config.Load()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// fmt.Println("==========================")
-	// fmt.Println(cfg.AppName)
-	// fmt.Println(cfg.AppPort)
-	// fmt.Println(cfg.StoragePath)
-	// fmt.Println("==========================")
-
-	// app, err := bootstrap.New()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// app.Logger.Info("MailVault is starting...")
-
-	// app.Logger.Info(
-	// 	"Configuration loaded",
-	// 	"Application", app.Config.AppName,
-	// 	"Port", app.Config.AppPort,
-	// )
-
-	// app.Logger.Info("Database connected successfully")
-
-	// boot, err := bootstrap.New()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// repo := gorm.NewBranchRepository(boot.DB)
-
-	// service := service.NewBranchService(repo)
-
-	// branch, err := service.Create(dto.CreateBranchRequest{
-	// 	Code: "BDG",
-	// 	Name: "Bandung",
-	// })
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	app, err := bootstrap.New()
 	if err != nil {
@@ -64,30 +21,31 @@ func main() {
 
 	//repository
 	repo := branchrepo.NewBranchRepository(app.DB)
+	mailAccountRepo := gorm.NewMailAccountRepository(app.DB)
+
 	//service
 	branchService := service.NewBranchService(repo)
+	mailAccountService := service.NewMailAccountService(
+		mailAccountRepo,
+		repo,
+	)
+
 	//handler
 	branchHandler := handler.NewBranchHandler(branchService)
+	mailAccountHandler := handler.NewMailAccountHandler(mailAccountService)
 
 	router := gin.Default()
 
 	api := router.Group("/api/v1")
 
 	branchGroup := api.Group("/branches")
+	mailGroup := api.Group("/mail-accounts")
 
 	route.RegisterBranchRoutes(branchGroup, branchHandler)
-	// branch, err := branchService.Create(dto.CreateBranchRequest{
-	// 	Code: "BDG",
-	// 	Name: "Bandung",
-	// })
+	route.RegisterMailAccountRoutes(mailGroup, mailAccountHandler)
 
 	if err := router.Run(":" + app.Config.AppPort); err != nil {
 		log.Fatal(err)
 	}
 
-	// app.Logger.Info(
-	// 	"Branch created",
-	// 	"id", branch.ID,
-	// 	"code", branch.Code,
-	// )
 }
