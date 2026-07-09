@@ -6,7 +6,10 @@ import (
 	"github.com/daexaf/mailvault/internal/domain/entities"
 	"github.com/daexaf/mailvault/internal/domain/repository"
 	"github.com/daexaf/mailvault/internal/dto"
+	"gorm.io/gorm"
 )
+
+var ErrBranchNotFound = errors.New("branch not found")
 
 type BranchService struct {
 	repo repository.BranchRepository
@@ -39,4 +42,20 @@ func (s *BranchService) Create(req dto.CreateBranchRequest) (*entities.Branch, e
 	}
 
 	return &branch, nil
+}
+
+func (s *BranchService) FindAll() ([]entities.Branch, error) {
+	return s.repo.FindAll()
+}
+
+func (s *BranchService) FindByID(id uint) (*entities.Branch, error) {
+	branch, err := s.repo.FindByID(id)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrBranchNotFound
+		}
+		return nil, err
+	}
+	return branch, nil
 }

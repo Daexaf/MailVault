@@ -34,8 +34,7 @@ func (r *branchRepository) FindByID(id uint) (*entities.Branch, error) {
 func (r *branchRepository) FindAll() ([]entities.Branch, error) {
 	var branches []entities.Branch
 
-	err := r.db.Find(&branches).Error
-	if err != nil {
+	if err := r.db.Find(&branches).Error; err != nil {
 		return nil, err
 	}
 
