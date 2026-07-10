@@ -7,4 +7,5 @@ import (
 
 func RegisterMailAccountRoutes(router *gin.RouterGroup, handler *handler.MailAccountHandler) {
 	router.POST("/", handler.Create)
+	router.POST("/:id/test", handler.TestConnection)
 }

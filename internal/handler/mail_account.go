@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/daexaf/mailvault/internal/dto"
 	"github.com/daexaf/mailvault/internal/service"
@@ -66,4 +67,36 @@ func (h *MailAccountHandler) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, response)
+}
+
+func (h *MailAccountHandler) TestConnection(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid Mail Account id",
+		})
+		return
+	}
+
+	err = h.service.TestConnection(uint(id))
+
+	if err != nil {
+		if errors.Is(err, service.ErrMailAccountNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Mail Account not found",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch Email",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "connection successful",
+	})
 }

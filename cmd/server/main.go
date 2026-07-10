@@ -44,6 +44,17 @@ func main() {
 	route.RegisterBranchRoutes(branchGroup, branchHandler)
 	route.RegisterMailAccountRoutes(mailGroup, mailAccountHandler)
 
+	// err = imap.TestConnection(
+	// 	"imap.gmail.com",
+	// 	993,
+	// 	"fitsan64@gmail.com",
+	// 	"ixrl lzuh qtti taoe",
+	// )
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if err := router.Run(":" + app.Config.AppPort); err != nil {
 		log.Fatal(err)
 	}
