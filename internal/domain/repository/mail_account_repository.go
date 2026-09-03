@@ -7,4 +7,5 @@ type MailAccountRepository interface {
 	FindAll() ([]entities.MailAccount, error)
 	FindByID(id uint) (*entities.MailAccount, error)
 	ExistsByEmail(email string) (bool, error)
+	UpdateLastUID(id uint, lastUID uint32) error
 }

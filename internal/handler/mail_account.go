@@ -100,3 +100,34 @@ func (h *MailAccountHandler) TestConnection(c *gin.Context) {
 		"message": "connection successful",
 	})
 }
+
+func (h *MailAccountHandler) Sync(c *gin.Context) {
+	idParam := c.Param("id")
+
+	id, err := strconv.ParseUint(idParam, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid Mail Account ID",
+		})
+		return
+	}
+
+	result, err := h.service.Sync(uint(id))
+	if err != nil {
+		if errors.Is(err, service.ErrMailAccountNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Mail Account not found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Email sync completed",
+		"data":    result,
+	})
+}

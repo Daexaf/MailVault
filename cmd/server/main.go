@@ -22,12 +22,23 @@ func main() {
 	//repository
 	repo := branchrepo.NewBranchRepository(app.DB)
 	mailAccountRepo := gorm.NewMailAccountRepository(app.DB)
+	emailRepo := gorm.NewEmailRepository(app.DB)
+	attachmentRepo := gorm.NewAttachmentRepository(app.DB)
+	emailService := service.NewEmailService(
+		emailRepo,
+	)
+
+	emailHandler := handler.NewEmailHandler(
+		emailService,
+	)
 
 	//service
 	branchService := service.NewBranchService(repo)
 	mailAccountService := service.NewMailAccountService(
 		mailAccountRepo,
 		repo,
+		emailRepo,
+		attachmentRepo,
 	)
 
 	//handler
@@ -37,6 +48,12 @@ func main() {
 	router := gin.Default()
 
 	api := router.Group("/api/v1")
+	emailGroup := api.Group("/emails")
+
+	route.RegisterEmailRoutes(
+		emailGroup,
+		emailHandler,
+	)
 
 	branchGroup := api.Group("/branches")
 	mailGroup := api.Group("/mail-accounts")

@@ -53,3 +53,15 @@ func (r *mailAccountRepository) FindByID(id uint) (*entities.MailAccount, error)
 
 	return &account, nil
 }
+
+func (r *mailAccountRepository) UpdateLastUID(
+	id uint,
+	lastUID uint32,
+) error {
+
+	return r.db.
+		Model(&entities.MailAccount{}).
+		Where("id = ?", id).
+		Update("last_uid", lastUID).
+		Error
+}

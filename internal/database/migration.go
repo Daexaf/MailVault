@@ -11,6 +11,8 @@ func Migrate(db *gorm.DB) error {
 	err := db.AutoMigrate(
 		&entities.Branch{},
 		&entities.MailAccount{},
+		&entities.Email{},
+		&entities.Attachment{},
 	)
 
 	if err != nil {

@@ -7,6 +7,10 @@ import (
 	"github.com/emersion/go-imap/client"
 )
 
+type Client struct {
+	client *client.Client
+}
+
 // type Client struct {
 // 	Host string
 // 	Port int
@@ -60,3 +64,18 @@ func TestConnection(
 
 	return nil
 }
+
+// func New(
+// 	host string,
+// 	port int,
+// 	email string,
+// 	password string,
+// ) (*Client, error)
+
+// 	if err != nil {
+//     return err
+// }
+
+// defer client.Close()
+
+// return nil
